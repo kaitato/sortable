@@ -16,7 +16,7 @@
 
 function displayHeroData(loadData) {
     // for (let i = 0; i < loadData.length; i++) {
-    //     const IconDiv = document.getElementById("hero" + i);
+    //     const IconDiv = document.getElementById("hero");
     //     const IconImg = document.createElement("img");
     //     const hero = loadData[i]
     //     IconImg.src = hero.images.xs;
@@ -46,8 +46,15 @@ function displayHeroData(loadData) {
         tr = table.insertRow(-1);
 
         for (let j = 0; j < col.length; j++) {
-            let tabCell = tr.insertCell(-1);
-            tabCell.innerHTML = loadData[i][col[j]];
+            if (typeof loadData[i][col[j]] === "object") {
+                for (let k = 0; k < col[j].length; k++) {
+                    let tabCell = tr.insertCell(-1);
+                    tabCell.innerHTML = loadData[i][col[j][k]];
+                }
+            } else {
+                let tabCell = tr.insertCell(-1);
+                tabCell.innerHTML = loadData[i][col[j]];
+            }
         }
     }
 
