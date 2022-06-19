@@ -7,8 +7,26 @@
     </head>
     <body>
         <script src="sortable.js"></script>
-        <div id="hero"></div>
-        <table id="table">
+        <div class="dataTables_length" id="example_length">
+            <label>
+                Show 
+                <select name="example_length" aria-controls="table" class>
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    <option value="??">all</option>
+                </select>
+                 entries
+            </label>
+        </div>
+        <div id="example_filter" class="dataTables_filter">
+            <label>
+                Search: 
+                <input type="search" class placeholder aria-controls="table">
+            </label>
+        </div>
+        <table id="table" class="dataTable">
             <tr>
                 <th>Images</th> 
                 <th colspan="3">Biography</th>
