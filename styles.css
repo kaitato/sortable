@@ -1,0 +1,13 @@
+th, td, p, input {
+    font: 1.4vh Verdana;
+}
+table, th, td 
+{
+    border: solid 1px #DDD;
+    border-collapse: collapse;
+    padding: 1vh 1vw;
+    text-align: center;
+}
+th {
+    font-weight:bold;
+}
