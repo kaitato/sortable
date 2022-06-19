@@ -5,24 +5,24 @@ fetch('https://rawcdn.githack.com/akabab/superhero-api/0.2.0/api/all.json')
     if (response.ok) {
         return response.json(); // parse the response from JSON
     } else {
-            throw new Error("NETWORK RESPONSE ERROR");
-        }
-    })
-    .then(loadData => {
-        console.log(loadData);
-        displayHeroData(loadData)
-    }) // .then will call the `loadData` function with the JSON value.
-    .catch((error) => console.error("FETCH ERROR:", error));
-    
-    function displayHeroData(loadData) {
-        // for (let i = 0; i < loadData.length; i++) {
-            //     const IconDiv = document.getElementById("hero");
-            //     const IconImg = document.createElement("img");
-            //     const hero = loadData[i]
-            //     IconImg.src = hero.images.xs;
-            //     IconDiv.appendChild(IconImg);
-            //     document.body.style.backgroundImage = "url('" + cocktail.strDrinkThumb + "')";
-            // }
+        throw new Error("NETWORK RESPONSE ERROR");
+    }
+})
+.then(loadData => {
+    console.log(loadData);
+    displayHeroData(loadData)
+}) // .then will call the `loadData` function with the JSON value.
+.catch((error) => console.error("FETCH ERROR:", error));
+
+function displayHeroData(loadData) {
+    // for (let i = 0; i < loadData.length; i++) {
+        //     const IconDiv = document.getElementById("hero");
+        //     const IconImg = document.createElement("img");
+        //     const hero = loadData[i]
+        //     IconImg.src = hero.images.xs;
+        //     IconDiv.appendChild(IconImg);
+        //     document.body.style.backgroundImage = "url('" + cocktail.strDrinkThumb + "')";
+        // }
             let col = ['images','name','biography','powerstats','appearance'];
             let bio = ['fullName', 'placeOfBirth', 'alignment']
             let app = ['race', 'gender', 'height', 'weight']
@@ -42,22 +42,22 @@ fetch('https://rawcdn.githack.com/akabab/superhero-api/0.2.0/api/all.json')
                         // for (let i = 0; i < col.length; i++) {
                             //     let th = document.createElement("th");      // table header.
                             //     th.innerHTML = col[i];
-    //     tr.appendChild(th);
-    // }
-
-    // add json data to the table as rows.
-    for (let i = 0; i < loadData.length; i++) {
-        
-        tr = table.insertRow(-1);
-        
-        for (let j = 0; j < col.length; j++) {
-            if (col[j]=== 'biography') {
-                for (let k = 0; k < bio.length; k++) {
-                    let tabCell = tr.insertCell(-1);
-                    tabCell.innerHTML = loadData[i][col[j]][bio[k]];
-                }
-            } else if (col[j] === 'appearance') {
-                for (let k = 0; k < app.length; k++) {
+                            //     tr.appendChild(th);
+                            // }
+                            
+                            // add json data to the table as rows.
+                            for (let i = 0; i < loadData.length; i++) {
+                                
+                                tr = table.insertRow(-1);
+                                
+                                for (let j = 0; j < col.length; j++) {
+                                    if (col[j]=== 'biography') {
+                                        for (let k = 0; k < bio.length; k++) {
+                                            let tabCell = tr.insertCell(-1);
+                                            tabCell.innerHTML = loadData[i][col[j]][bio[k]];
+                                        }
+                                    } else if (col[j] === 'appearance') {
+                                        for (let k = 0; k < app.length; k++) {
                     let tabCell = tr.insertCell(-1);
                     tabCell.innerHTML = loadData[i][col[j]][app[k]];
                 }
