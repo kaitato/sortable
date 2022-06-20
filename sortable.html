@@ -1,64 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <title>Sortable</title>
-        <link href="styles.css" rel="stylesheet"/>
-    </head>
-    <body>
-        <script src="sortable.js"></script>
-        <div class="dataTables_length" id="example_length">
-            <label>
-                Show 
-                <select name="example_length" aria-controls="table" class>
-                    <option value="10">10</option>
-                    <option value="20">20</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                    <option value="??">all</option>
-                </select>
-                 entries
-            </label>
-        </div>
-        <div id="example_filter" class="dataTables_filter">
-            <label>
-                Search: 
-                <input type="search" class placeholder aria-controls="table">
-            </label>
-        </div>
-        <table id="table" class="dataTable">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sortable</title>
+<style>
+html, body{
+    font-family: arial;
+
+}
+#pagination {
+    display: flex; 
+    flex-wrap: wrap; 
+    list-style: none;
+
+}
+tbody{
+    background-color: rgb(241, 241, 241);
+}
+</style>
+</head>
+
+<body>
+    <center><h1>01F SORTABLE</h1></center>
+   <span><i><strong>search:</strong></i></span> <input id="search">
+    <button id="sort"> Name (Click for desc & Double C.for asc)</button>
+    <button id="sortName">Full Name(Click for desc & Double click for asc)</button>
+    <select id="display">
+        <option value="10">10</option>
+        <option value="20" selected='selected'>20</option>
+        <option value="50">50</option>
+        <option value="100">100</option>
+        <option value="All">All</option>
+    </select>
+    <hr/>
+    <table id="catTable">
+        <thead>
             <tr>
-                <th>Images</th> 
-                <th colspan="4">Biography</th>
-                <th colspan="6">Powerstats</th>
-                <th colspan="4">Appearance</th>
+                <th data-sort="icon">Icon</th>
+                <th data-sort="name">Name</th>
+                <th data-sort="biography.fullName">Full Name</th>
+                <th data-sort="powerstats.intelligence">Intelligence</th>
+                <th data-sort="powerstats.strength">Strength</th>
+                <th data-sort="powerstats.speed">Speed</th>
+                <th data-sort="powerstats.durability">Durability</th>
+                <th data-sort="powerstats.power">Power</th>
+                <th data-sort="powerstats.combat">Combat</th>
+                <th data-sort="appearance.race">Race</th>
+                <th data-sort="appearance.gender">Gender</th>
+                <th data-sort="appearance.height[1]">Height</th>
+                <th data-sort="appearance.weight[1]">Weight</th>
+                <th data-sort="biography.placeOfBirth">Place of Birth</th>
+                <th data-sort="biography.alignment">Alignment</th>
             </tr>
+        </thead>
+        <tbody>
             <tr>
-                 <th>Icon </th>
-                 <th>Name</th>
-                 <th>Full Name</th>
-                 <th>Place Of Birth</th>
-                 <th>Alignment</th>
-                 <th>intelligence</th>
-                 <th>strength</th>
-                 <th>speed</th>
-                 <th>durability</th>
-                 <th>power</th>
-                 <th>combat</th>
-                 <th>Race</th>
-                 <th>Gender</th>
-                 <th>Height</th>
-                 <th>Weight</th>
+                <td colspan="4"><strong>Loading...</strong></td>
             </tr>
-        </table>
-        <p id="showData"></p>
-        <div class="dataTables_paginate paging_full_numbers" id="example_paginate">
-            <a class="paginate_button first disabled" aria-controls="table" data-dt-idx="0" tabindex="-1" id="example_first">First</a>
-            <a class="paginate_button previous disabled" aria-controls="table" data-dt-idx="1" tabindex="-1" id="example_previous">Previous</a>
-            <span>
-            </span>
-            <a class="paginate_button next" aria-controls="table" data-dt-idx="8" tabindex="0" id="example_next">Next</a>
-            <a class="paginate_button last" aria-controls="table" data-dt-idx="9" tabindex="0" id="example_last">Last</a>
-        </div>
-    </body>
+        </tbody>
+    </table>
+    <ul id="pagination">...</ul>
+    <hr/>
+    <script src="sortable.js"></script>
+
+</body>
+
 </html>

@@ -1,97 +1,237 @@
-// Request the file with fetch, the data will downloaded to your browser cache.
+let sHeroes
+(async () => {
+  const searchInput = document.querySelector("#search");
+  const sortButton = document.querySelector("#sort");
+  const sortNameButton = document.querySelector("#sortName");
+  const pagination = document.querySelector("#pagination");
+  const pageSize = document.querySelector("#display")
 
-fetch('https://rawcdn.githack.com/akabab/superhero-api/0.2.0/api/all.json')
-.then((response) => {
-    if (response.ok) {
-        return response.json(); // parse the response from JSON
-    } else {
-        throw new Error("NETWORK RESPONSE ERROR");
-    }
-})
-.then(loadData => {
-    console.log(loadData);
-    displayHeroData(loadData)
-}) // .then will call the `loadData` function with the JSON value.
-.catch((error) => console.error("FETCH ERROR:", error));
+  const data =
+    JSON.parse(localStorage.getItem("superhero")) ||
+    (await (
+      await fetch(
+        "https://rawcdn.githack.com/akabab/superhero-api/0.2.0/api/all.json"
+      )
+    ).json());
 
-function displayHeroData(loadData) {
-    // for (let i = 0; i < loadData.length; i++) {
-        //     const IconDiv = document.getElementById("hero");
-        //     const IconImg = document.createElement("img");
-        //     const hero = loadData[i]
-        //     IconImg.src = hero.images.xs;
-        //     IconDiv.appendChild(IconImg);
-        //     document.body.style.backgroundImage = "url('" + cocktail.strDrinkThumb + "')";
-        // }
-            let col = ['images','name','biography','powerstats','appearance'];
-            let bio = ['fullName', 'placeOfBirth', 'alignment']
-            let app = ['race', 'gender', 'height', 'weight']
-            let pow = ['intelligence', 'strength', 'speed', 'durability', 'power', 'combat']
-            // let col = []
-            // for (let i = 0; i < loadData.length; i++) {
-                //     for (let key in loadData[i]) {
-                    //         if (col.indexOf(key) === -1) {
-                        //             console.log(key)
-                        //             col.push(key);
-                        //         }
-                        //     }
-                        // }
-                        let table = document.getElementById("table");
-                        let tr = table.insertRow(-1);                   // table row.
-                        
-                        // for (let i = 0; i < col.length; i++) {
-                            //     let th = document.createElement("th");      // table header.
-                            //     th.innerHTML = col[i];
-                            //     tr.appendChild(th);
-                            // }
-                            
-                            // add json data to the table as rows.
-                            for (let i = 0; i < loadData.length; i++) {
-                                
-                                tr = table.insertRow(-1);
-                                
-                                for (let j = 0; j < col.length; j++) {
-                                    if (col[j]=== 'biography') {
-                                        for (let k = 0; k < bio.length; k++) {
-                                            let tabCell = tr.insertCell(-1);
-                                            tabCell.innerHTML = loadData[i][col[j]][bio[k]];
-                                        }
-                                    } else if (col[j] === 'appearance') {
-                                        for (let k = 0; k < app.length; k++) {
-                    let tabCell = tr.insertCell(-1);
-                    tabCell.innerHTML = loadData[i][col[j]][app[k]];
-                }
-            } else if (col[j] === 'powerstats'){
-                for (let k = 0; k < pow.length; k++) {
-                    let tabCell = tr.insertCell(-1);
-                    tabCell.innerHTML = loadData[i][col[j]][pow[k]];
-                }
-            }else if (col[j] ==='images'){
-                const IconImg = document.createElement("img");
-                IconImg.src = loadData[i].images.xs;
-                let tabCell = tr.insertCell(-1);
-                tabCell.appendChild(IconImg);
-                
-            } else {
-                let tabCell = tr.insertCell(-1);
-                
-                tabCell.innerHTML = loadData[i][col[j]];
-            }
-            
-            
+  searchInput.addEventListener("input", (e) => {
+    filteredData = data.filter((item) =>
+      item.name
+        .toLocaleLowerCase()
+        .includes(e.target.value.trim().toLocaleLowerCase())
+
+    );
+    sHeroes = filteredData
+    console.log('filter', filteredData)
+    paginate(filteredData)
+
+  });
+
+  sHeroes = data
+  document.querySelectorAll('#catTable thead tr th').forEach(t => {
+    t.addEventListener('click', sort, false);
+  });
+
+  let sortCol;
+  let sortAsc = false;
+  function sort(e) {
+    let thisSort = e.target.dataset.sort;
+    if (thisSort === 'powerstats.intelligence' || 'powerstats.strength' || 'powerstats.speed' || 'powerstats.durability' || 'powerstats.power' || 'powerstats.combat') {
+      let st = thisSort.split('.')
+      sortCol = st[1];
+      sortHeroes = sHeroes.sort((a, b) => {
+        if (a.powerstats[sortCol] < b.powerstats[sortCol]) {
+          return sortAsc ? 1 : -1;
+        } else if (a.powerstats[sortCol] > b.powerstats[sortCol]) {
+          return sortAsc ? -1 : 1;
+        } else {
+          return 0;
         }
+      });
     }
-    // Now, add the newly created table with json data, to a container.
-    let divShowData = document.getElementById('showData');
-    divShowData.innerHTML = "";
-    divShowData.appendChild(table);
-    
-    document.getElementById('msg').innerHTML = '<br />You can later <a href="https://www.encodedna.com/javascript/dynamically-add-remove-rows-to-html-table-using-javascript-and-save-data.htm" target="_blank" style="color:#1464f4;text-decoration:none;">get all the data from table and save it in a database.</a>';
-    
+
+
+    const table = document.querySelectorAll('tbody tr')
+    table.forEach(tb => tb.remove())
+    let limit = document.getElementById('page-size').value
+    let pageCount = Math.ceil(sHeroes.length / limit);
+    let deleteButtons = document.querySelectorAll('#pagination li')
+    deleteButtons.forEach(tb => tb.remove())
+    if (limit == 'All') {
+      limit = data.length;
+    }
+    for (let i = 1; i <= pageCount; i += 1) {
+      const li = document.createElement("li");
+      const button = document.createElement("button");
+      button.textContent = i;
+      button.onclick = () => {
+        let page = i;
+        const pageData = paginateTwo(data, limit, page)
+        display(pageData)
+      };
+      li.append(button);
+      pagination.append(li);
+    }
+    let pageData = paginateTwo(sHeroes, limit, 1)
+    display(pageData)
+  }
+
+  localStorage.setItem("superhero", JSON.stringify(data));
+  let filteredData = data;
+  let limit = 20;
+
+  function paginate(data) {
+    pagination.textContent = "";
+    let pageCount = Math.ceil(data.length / limit);
+    for (let i = 1; i <= pageCount; i += 1) {
+
+      const li = document.createElement("li");
+      const button = document.createElement("button");
+      button.textContent = i;
+      button.onclick = () => {
+        let page = i;
+        const pageData = paginateTwo(data, limit, page)
+        console.log('array', pageData)
+        display(pageData)
+      };
+      li.append(button);
+      pagination.append(li);
+    }
+    firstDisplay(filteredData)
+
+  }
+
+  paginate(filteredData)
+
+  pageSize.addEventListener('change', (e) => {
+    console.log('Im alive')
+    filteredData = data
+    limit = e.target.value
+    const table = document.querySelectorAll('tbody tr')
+    table.forEach(tb => tb.remove())
+    let pageCount = Math.ceil(data.length / limit);
+    console.log('pageCount', pageCount)
+    let deleteButtons = document.querySelectorAll('#pagination li')
+    deleteButtons.forEach(tb => tb.remove())
+    if (limit == 'All') {
+      limit = data.length;
+    }
+    for (let i = 1; i <= pageCount; i += 1) {
+      const li = document.createElement("li");
+      const button = document.createElement("button");
+      button.textContent = i;
+      button.onclick = () => {
+        let page = i;
+        const pageData = paginateTwo(data, limit, page)
+        display(pageData)
+      };
+      li.append(button);
+      pagination.append(li);
+    }
+    let pageData = paginateTwo(data, limit, 1)
+    display(pageData)
+  });
+
+
+
+  sortButton.addEventListener("click", (e) => {
+    if (e.detail === 1) {
+      let sortedData = filteredData.sort((a, b) =>
+        a.name.toLowerCase() < b.name.toLowerCase() ? 1 : -1
+      );
+
+      paginate(sortedData)
+    }
+
+    if (e.detail === 2) {
+      let sortedData = filteredData.sort((a, b) =>
+        a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1
+      );
+      paginate(sortedData)
+    }
+  });
+
+
+  ////
+
+  sortNameButton.addEventListener("click", (e) => {
+    if (e.detail === 1) {
+      let sortedData = filteredData.sort((a, b) =>
+        a.biography.fullName.toLowerCase() < b.biography.fullName.toLowerCase() ? 1 : -1
+      );
+
+      paginate(sortedData)
+    }
+
+    if (e.detail === 2) {
+      let sortedData = filteredData.sort((a, b) =>
+        a.biography.fullName.toLowerCase() > b.biography.fullName.toLowerCase() ? 1 : -1
+      );
+      paginate(sortedData)
+    }
+  });
+})();
+////
+
+
+function paginateTwo(arr, pageSize, pageNum) {
+  return arr.slice((pageNum - 1) * pageSize, pageNum * pageSize);
+};/*paginate*/
+
+function display(pageArr) {
+  let html = ''
+  pageArr.forEach((ele, i) => {
+    let htmlSegment = `
+                 <tr class="${i}">
+                    <td><img src="${ele.images.xs}" ></td>
+                    <td>${ele.name}</td>
+                    <td>${ele.biography.fullName}</td>
+                    <td>${ele.powerstats.intelligence}</td>
+                    <td>${ele.powerstats.strength}</td>
+                    <td>${ele.powerstats.speed}</td>
+                    <td>${ele.powerstats.durability}</td>
+                    <td>${ele.powerstats.power}</td>
+                    <td>${ele.powerstats.combat}</td>
+                    <td>${ele.appearance.race}</td>
+                    <td>${ele.appearance.gender}</td>
+                    <td>${ele.appearance.height[1]}</td>
+                    <td>${ele.appearance.weight[1]}</td>
+                    <td>${ele.biography.placeOfBirth}</td>
+                    <td>${ele.biography.alignment}</td>
+                 </tr>`;
+    html += htmlSegment;
+  })
+  let tblBody = document.querySelector('tbody')
+  tblBody.innerHTML = html
 }
 
-(document).ready(function () {
-    ('#table').DataTable({
-        pagingType: 'full_numbers',
-    });
-});
+function firstDisplay(arr) {
+  let html = ''
+  arr.forEach((ele, i) => {
+    if (i <= 19) {
+      let htmlSegment = `
+                 <tr class="${i}">
+                 <td><img src="${ele.images.xs}" ></td>
+                 <td>${ele.name}</td>
+                 <td>${ele.biography.fullName}</td>
+                 <td>${ele.powerstats.intelligence}</td>
+                 <td>${ele.powerstats.strength}</td>
+                 <td>${ele.powerstats.speed}</td>
+                 <td>${ele.powerstats.durability}</td>
+                 <td>${ele.powerstats.power}</td>
+                 <td>${ele.powerstats.combat}</td>
+                 <td>${ele.appearance.race}</td>
+                 <td>${ele.appearance.gender}</td>
+                 <td>${ele.appearance.height[1]}</td>
+                 <td>${ele.appearance.weight[1]}</td>
+                 <td>${ele.biography.placeOfBirth}</td>
+                 <td>${ele.biography.alignment}</td>
+                 </tr>`;
+      html += htmlSegment;
+    }
+  })
+  let tblBody = document.querySelector('tbody')
+  tblBody.innerHTML = html
+}
+
+//A LITTLE HELP FROM LUIS. :)
